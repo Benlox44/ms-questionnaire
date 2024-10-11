@@ -1,4 +1,3 @@
-
 import { HttpService } from '@nestjs/axios';
 import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
@@ -20,10 +19,13 @@ export class AuthGuard implements CanActivate {
         throw new UnauthorizedException('Access token is missing');
       }
 
+      // Enviar el token como encabezado Authorization
       const response = await lastValueFrom(
-        this.httpService.post(
-          `${this.configService.get<string>('MS_IAM')}/check-token`,  // URL al endpoint de verificación en ms-iam
-          { token: accessToken },
+        this.httpService.get(
+          `${this.configService.get<string>('MS_IAM')}/auth/check`,  // URL al endpoint de verificación en ms-iam
+          {
+            headers: { Authorization: `Bearer ${accessToken}` }, // Aquí mandamos el token en el encabezado
+          }
         ),
       );
 
