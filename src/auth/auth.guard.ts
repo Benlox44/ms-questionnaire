@@ -1,3 +1,4 @@
+
 import { HttpService } from '@nestjs/axios';
 import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
@@ -21,7 +22,7 @@ export class AuthGuard implements CanActivate {
 
       const response = await lastValueFrom(
         this.httpService.post(
-          `${this.configService.get<string>('MS_IAM')}/check-token`, // URL al endpoint de verificación en ms-iam
+          `${this.configService.get<string>('MS_IAM')}/check-token`,  // URL al endpoint de verificación en ms-iam
           { token: accessToken },
         ),
       );
