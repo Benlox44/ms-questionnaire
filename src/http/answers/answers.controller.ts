@@ -1,34 +1,36 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { AnswersService } from './answers.service';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import { AnswersService } from 'src/http/answers/answers.service';  // Asegúrate de importar el servicio
 import { CreateAnswerDto } from './dto/create-answer.dto';
 import { UpdateAnswerDto } from './dto/update-answer.dto';
+import { AuthGuard } from 'src/auth/auth.guard';  // Asegúrate de importar el AuthGuard
 
-@Controller('answers')
-export class AnswersController {
-  constructor(private readonly answersService: AnswersService) {}
+@Controller('answer')
+@UseGuards(AuthGuard)  // Aplica el guard para proteger las rutas
+export class AnswerController {
+  constructor(private readonly answerService: AnswersService) {}
 
   @Post()
-  async create(@Body() createAnswerDto: CreateAnswerDto) {
-    return this.answersService.create(createAnswerDto);
+  create(@Body() createAnswerDto: CreateAnswerDto) {
+    return this.answerService.create(createAnswerDto);
   }
 
   @Get()
-  async findAll() {
-    return this.answersService.findAll();
+  findAll() {
+    return this.answerService.findAll();
   }
 
   @Get(':id')
-  async findOne(@Param('id') id: string) {
-    return this.answersService.findOne(id);
+  findOne(@Param('id') id: string) {
+    return this.answerService.findOne(id);
   }
 
   @Patch(':id')
-  async update(@Param('id') id: string, @Body() updateAnswerDto: UpdateAnswerDto) {
-    return this.answersService.update(id, updateAnswerDto);
+  update(@Param('id') id: string, @Body() updateAnswerDto: UpdateAnswerDto) {
+    return this.answerService.update(id, updateAnswerDto);
   }
 
   @Delete(':id')
-  async remove(@Param('id') id: string) {
-    return this.answersService.remove(id);
+  remove(@Param('id') id: string) {
+    return this.answerService.remove(id);
   }
 }

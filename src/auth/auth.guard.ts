@@ -1,5 +1,5 @@
-import { Injectable, CanActivate, ExecutionContext, UnauthorizedException, HttpException } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
+import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { lastValueFrom } from 'rxjs';
 
@@ -11,43 +11,29 @@ export class AuthGuard implements CanActivate {
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const request = context.switchToHttp().getRequest();
-    const token = request.headers['authorization']?.split(' ')[1];
-
-    if (!token) {
-      throw new UnauthorizedException('Authorization token not provided');
-    }
-
-    // Get MS_IAM environment variable
-    const msIamUrl = this.configService.get<string>('MS_IAM');
-
-    if (!msIamUrl) {
-      // Return a more descriptive error for undefined MS_IAM
-      throw new Error('MS_IAM environment variable is not set. Please configure the service URL.');
-    }
-
-    const authUrl = `${msIamUrl}`;
-
     try {
+      const request = context.switchToHttp().getRequest();
+      const accessToken = request.headers['authorization']?.split(' ')[1];
+
+      if (!accessToken) {
+        throw new UnauthorizedException('Access token is missing');
+      }
+
       const response = await lastValueFrom(
-        this.httpService.get(authUrl, {
-          headers: { Authorization: `Bearer ${token}` },
-        }),
+        this.httpService.post(
+          `${this.configService.get<string>('MS_IAM')}/check-token`, // URL al endpoint de verificación en ms-iam
+          { token: accessToken },
+        ),
       );
 
-      // If response doesn't contain a valid token flag
-      if (!(response.data && response.data.isValid)) {
-        throw new UnauthorizedException('Token is either invalid or has expired');
+      if (response.data && response.data.isValid) {
+        return true;  // Token es válido
+      } else {
+        throw new UnauthorizedException('Invalid token');
       }
 
-      return true;
     } catch (error) {
-      // Differentiate between internal errors and verification issues
-      if (error instanceof HttpException) {
-        throw new UnauthorizedException('Token verification failed with the remote service');
-      } else {
-        throw new UnauthorizedException('An unexpected error occurred during token verification');
-      }
+      throw new UnauthorizedException('Unauthorized');
     }
   }
 }
