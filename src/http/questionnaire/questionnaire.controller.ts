@@ -1,37 +1,26 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Param, Body, UseGuards } from '@nestjs/common';
 import { QuestionnaireService } from './questionnaire.service';
-import { CreateQuestionnaireDto } from './dto/create-questionnaire.dto';
-import { UpdateQuestionnaireDto } from './dto/update-questionnaire.dto';
-import { AuthGuard } from 'src/auth/auth.guard';
+import { AuthGuard } from '../../auth/auth.guard';
 
-@Controller('questionnaire')
+@Controller('questionnaires')
 export class QuestionnaireController {
   constructor(private readonly questionnaireService: QuestionnaireService) {}
 
-  @Post()
-  @UseGuards(AuthGuard)
-  async create(@Body() createQuestionnaireDto: CreateQuestionnaireDto) {
-    return this.questionnaireService.create(createQuestionnaireDto);
-  }
-
+  @UseGuards(AuthGuard)  // Proteger con AuthGuard
   @Get()
-  @UseGuards(AuthGuard)
-   findAll() {
-    return this.questionnaireService.findAll();
+  async getAll() {
+    return this.questionnaireService.getAll();
   }
 
+  @UseGuards(AuthGuard)  // Proteger con AuthGuard
   @Get(':id')
-  async findOne(@Param('id') id: string) {
-    return this.questionnaireService.findOne(id);
+  async getById(@Param('id') id: string) {
+    return this.questionnaireService.getById(id);
   }
 
-  @Patch(':id')
-  async update(@Param('id') id: string, @Body() updateQuestionnaireDto: UpdateQuestionnaireDto) {
-    return this.questionnaireService.update(id, updateQuestionnaireDto);
-  }
-
-  @Delete(':id')
-  async remove(@Param('id') id: string) {
-    return this.questionnaireService.remove(id);
+  @UseGuards(AuthGuard)  // Proteger con AuthGuard
+  @Post()
+  async create(@Body() questionnaireDto: any) {
+    return this.questionnaireService.create(questionnaireDto);
   }
 }

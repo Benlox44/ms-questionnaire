@@ -1,33 +1,29 @@
-import { Injectable } from '@nestjs/common';
-import { CreateQuestionnaireDto } from './dto/create-questionnaire.dto';
-import { UpdateQuestionnaireDto } from './dto/update-questionnaire.dto';
-import { Questionnaire } from '../../schemas/questionnaire.schhema';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-
+import { Questionnaire, QuestionnaireDocument } from '../../schemas/questionnaire.schhema';
 
 @Injectable()
 export class QuestionnaireService {
-  constructor(@InjectModel(Questionnaire.name) private questionnaireModel: Model<Questionnaire>) {}
+  constructor(
+    @InjectModel(Questionnaire.name)
+    private readonly questionnaireModel: Model<QuestionnaireDocument>
+  ) {}
 
-  async create(createQuestionnaireDto: CreateQuestionnaireDto) {
-    const createdQuestionnaire = new this.questionnaireModel(createQuestionnaireDto);
-    return createdQuestionnaire.save();
-  }
-
-  async findAll() {
+  async getAll(): Promise<Questionnaire[]> {
     return this.questionnaireModel.find().exec();
   }
 
-  async findOne(id: string) {
-    return this.questionnaireModel.findById(id).exec();
+  async getById(id: string): Promise<Questionnaire> {
+    const questionnaire = await this.questionnaireModel.findById(id).exec();
+    if (!questionnaire) {
+      throw new NotFoundException('Questionnaire not found');
+    }
+    return questionnaire;
   }
 
-  async update(id: string, updateQuestionnaireDto: UpdateQuestionnaireDto) {
-    return this.questionnaireModel.findByIdAndUpdate(id, updateQuestionnaireDto).exec();
-  }
-
-  async remove(id: string) {
-    return this.questionnaireModel.findByIdAndDelete(id).exec();
+  async create(questionnaireDto: any): Promise<Questionnaire> {
+    const newQuestionnaire = new this.questionnaireModel(questionnaireDto);
+    return newQuestionnaire.save();
   }
 }
