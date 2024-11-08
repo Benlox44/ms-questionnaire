@@ -8,10 +8,10 @@ import { AuthGuard } from 'src/auth/auth.guard';
 
 @Module({
   imports: [
-    HttpModule,  // Importamos HttpModule para que esté disponible en este módulo
+    HttpModule,
     MongooseModule.forFeature([{ name: Questionnaire.name, schema: QuestionnaireSchema }]),
   ],
   controllers: [QuestionnaireController],
-  providers: [QuestionnaireService, AuthGuard],  // Asegúrate de incluir tu AuthGuard en los providers
+  providers: [QuestionnaireService, AuthGuard],
 })
 export class QuestionnaireModule {}

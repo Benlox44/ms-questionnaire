@@ -6,19 +6,19 @@ import { AuthGuard } from '../../auth/auth.guard';
 export class QuestionnaireController {
   constructor(private readonly questionnaireService: QuestionnaireService) {}
 
-  @UseGuards(AuthGuard)  // Proteger con AuthGuard
+  @UseGuards(AuthGuard)
   @Get()
   async getAll() {
     return this.questionnaireService.getAll();
   }
 
-  @UseGuards(AuthGuard)  // Proteger con AuthGuard
+  @UseGuards(AuthGuard)
   @Get(':id')
   async getById(@Param('id') id: string) {
     return this.questionnaireService.getById(id);
   }
 
-  @UseGuards(AuthGuard)  // Proteger con AuthGuard
+  @UseGuards(AuthGuard)
   @Post()
   async create(@Body() questionnaireDto: any) {
     return this.questionnaireService.create(questionnaireDto);
