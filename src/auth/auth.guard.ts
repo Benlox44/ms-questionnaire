@@ -30,6 +30,8 @@ export class AuthGuard implements CanActivate {
       );
 
       if (response.data && response.data.isValid) {
+        // Adjuntar la información del usuario al objeto request
+        request.user = response.data.user;
         return true;  // Token es válido
       } else {
         throw new UnauthorizedException('Invalid token');

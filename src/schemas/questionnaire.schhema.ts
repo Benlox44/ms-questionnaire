@@ -1,48 +1,52 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+  // questionnaire.schhema.ts
+  import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+  import { Document } from 'mongoose';
 
-export type QuestionnaireDocument = Questionnaire & Document;
+  export type QuestionnaireDocument = Questionnaire & Document;
 
-@Schema()
-export class Questionnaire {
-  @Prop({ required: true })
-  name!: string;
+  @Schema()
+  export class Questionnaire {
+    @Prop({ required: true })
+    name!: string;
 
-  @Prop({ type: Array })
-  sections?: QuestionnaireSection[];
+    @Prop({ type: Array })
+    sections?: QuestionnaireSection[];
 
-  @Prop()
-  createdAt?: string;
+    @Prop()
+    createdAt?: string;
 
-  @Prop()
-  updateAt?: string;
-}
+    @Prop()
+    updateAt?: string;
 
-@Schema()
-export class QuestionnaireSection {
-  @Prop({ required: true })
-  title!: string;
+    @Prop({ required: true, default: 'incompleto' })  
+    status!: 'completado' | 'incompleto';  // Valores posibles
+  }
 
-  @Prop({ type: Array })
-  questions?: QuestionnaireQuestion[];
-}
+  @Schema()
+  export class QuestionnaireSection {
+    @Prop({ required: true })
+    title!: string;
 
-@Schema()
-export class QuestionnaireQuestion {
-  @Prop()
-  number?: number;
+    @Prop({ type: Array })
+    questions?: QuestionnaireQuestion[];
+  }
 
-  @Prop({ required: true })
-  title!: string;
+  @Schema()
+  export class QuestionnaireQuestion {
+    @Prop()
+    number?: number;
 
-  @Prop()
-  observations?: string;
+    @Prop({ required: true })
+    title!: string;
 
-  @Prop({ type: [String] })
-  alternatives?: string[];
+    @Prop()
+    observations?: string;
 
-  @Prop({ required: true })
-  type!: 'development' | 'choice';
-}
+    @Prop({ type: [String] })
+    alternatives?: string[];
 
-export const QuestionnaireSchema = SchemaFactory.createForClass(Questionnaire);
+    @Prop({ required: true })
+    type!: 'development' | 'choice';
+  }
+
+  export const QuestionnaireSchema = SchemaFactory.createForClass(Questionnaire);
