@@ -1,52 +1,69 @@
-  // questionnaire.schhema.ts
-  import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-  import { Document } from 'mongoose';
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Document } from 'mongoose';
 
-  export type QuestionnaireDocument = Questionnaire & Document;
+export type QuestionnaireDocument = Questionnaire & Document;
 
-  @Schema()
-  export class Questionnaire {
-    @Prop({ required: true })
-    name!: string;
+@Schema()
+export class MachineEmbedded {
+  @Prop({ required: true })
+  plate!: string;
 
-    @Prop({ type: Array })
-    sections?: QuestionnaireSection[];
+  @Prop({ required: true, enum: ['Car', 'Truck', 'Motorcycle', 'Bus', 'Bicycle', 'Tractor', 'Excavator', 'Forklift', 'Drone'] })
+  type!: 'Car' | 'Truck' | 'Motorcycle' | 'Bus' | 'Bicycle' | 'Tractor' | 'Excavator' | 'Forklift' | 'Drone';
 
-    @Prop()
-    createdAt?: string;
+  @Prop({ required: true })
+  brand!: string;
 
-    @Prop()
-    updateAt?: string;
+  @Prop({ required: true })
+  model!: string;
+}
 
-    @Prop({ required: true, default: 'incompleto' })  
-    status!: 'completado' | 'incompleto';  // Valores posibles
-  }
+@Schema()
+export class Questionnaire {
+  @Prop({ required: true })
+  name!: string;
 
-  @Schema()
-  export class QuestionnaireSection {
-    @Prop({ required: true })
-    title!: string;
+  @Prop({ type: Array })
+  sections?: QuestionnaireSection[];
 
-    @Prop({ type: Array })
-    questions?: QuestionnaireQuestion[];
-  }
+  @Prop()
+  createdAt?: string;
 
-  @Schema()
-  export class QuestionnaireQuestion {
-    @Prop()
-    number?: number;
+  @Prop()
+  updateAt?: string;
 
-    @Prop({ required: true })
-    title!: string;
+  @Prop({ required: true, default: 'incompleto' })
+  status!: 'completado' | 'incompleto';
 
-    @Prop()
-    observations?: string;
+  @Prop({ type: MachineEmbedded, required: true }) // Atributo embebido con los datos de la máquina
+  machine!: MachineEmbedded;
+}
 
-    @Prop({ type: [String] })
-    alternatives?: string[];
+@Schema()
+export class QuestionnaireSection {
+  @Prop({ required: true })
+  title!: string;
 
-    @Prop({ required: true })
-    type!: 'development' | 'choice';
-  }
+  @Prop({ type: Array })
+  questions?: QuestionnaireQuestion[];
+}
 
-  export const QuestionnaireSchema = SchemaFactory.createForClass(Questionnaire);
+@Schema()
+export class QuestionnaireQuestion {
+  @Prop()
+  number?: number;
+
+  @Prop({ required: true })
+  title!: string;
+
+  @Prop()
+  observations?: string;
+
+  @Prop({ type: [String] })
+  alternatives?: string[];
+
+  @Prop({ required: true })
+  type!: 'development' | 'choice';
+}
+
+export const QuestionnaireSchema = SchemaFactory.createForClass(Questionnaire);
